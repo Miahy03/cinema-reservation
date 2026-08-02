@@ -37,6 +37,8 @@ public class SecurityConf {
                     .hasAnyRole("EMPLOYEE", "MANAGER")
                     .requestMatchers(HttpMethod.GET, "/reservations/**")
                     .authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/movies")
+                    .hasRole("MANAGER")
                     .anyRequest()
                     .authenticated())
         .exceptionHandling(
