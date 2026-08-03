@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 public class ProjectionController {
-    private final ProjectionService projectionService;
+  private final ProjectionService projectionService;
 
-    @GetMapping("/projections")
-    public List<ProjectionResponse> getAll() {
-        return projectionService.listAll();
-    }
+  @GetMapping("/projections")
+  public List<ProjectionResponse> getAll() {
+    return projectionService.listAll();
+  }
 
-    @PutMapping("/projections")
-    public ProjectionResponse update(@Valid @RequestBody UpsertProjection request) {
-        return projectionService.update(request);
-    }
+  @PutMapping("/projections")
+  public ProjectionResponse update(@Valid @RequestBody UpsertProjection request) {
+    return projectionService.update(request);
+  }
 }

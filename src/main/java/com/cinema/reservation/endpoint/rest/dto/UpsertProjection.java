@@ -6,8 +6,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record UpsertProjection(
-        @NotNull UUID id,
-        @NotNull Instant datetime,
-        @NotNull BigDecimal seatPrice,
-        @NotNull UUID movieId,
-        @NotNull UUID roomId) {}
+    @NotNull UUID id,
+    @NotNull Instant datetime,
+    @NotNull BigDecimal seatPrice,
+    @NotNull UUID movieId,
+    @NotNull UUID roomId) {}
