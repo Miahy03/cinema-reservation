@@ -50,17 +50,7 @@ jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    "**/gen/**",
-                    "**/mail/**",
-                    "**/handler/**",
-                    "**/file/**",
-                    "**/concurrency/**",
-                    "**/datastructure/**",
-                    "**/health/**",
-                    "**/PojaApplication.class",
-                    "**/PojaGenerated.class",
-                    "**/endpoint/EndpointConf.class",
-                    "**/endpoint/RequestLoggerConfigurer.class"
+                    "**/gen/**"
             ])
         }))
     }
@@ -85,17 +75,7 @@ jacocoTestReport {
         // else display coverageRate is inconsistent with what was computed during coverage...
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    "**/gen/**",
-                    "**/mail/**",
-                    "**/handler/**",
-                    "**/file/**",
-                    "**/concurrency/**",
-                    "**/datastructure/**",
-                    "**/health/**",
-                    "**/PojaApplication.class",
-                    "**/PojaGenerated.class",
-                    "**/endpoint/EndpointConf.class",
-                    "**/endpoint/RequestLoggerConfigurer.class"
+                    "**/gen/**"
             ])
         }))
     }
@@ -132,15 +112,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.2'
     testImplementation 'org.testcontainers:testcontainers:2.0.2'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.postgresql:postgresql'
-
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
-
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
 
     implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.1.0'
@@ -172,9 +143,7 @@ dependencies {
     implementation 'io.swagger:swagger-annotations:1.6.12'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.2'
-    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:testcontainers-junit-jupiter:2.0.2'
-    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.2'
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
 
