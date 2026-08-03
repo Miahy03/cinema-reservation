@@ -7,21 +7,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record ProjectionResponse(
-        UUID id,
-        Instant datetime,
-        BigDecimal seatPrice,
-        MovieInfo movie,
-        RoomInfo room) {
+    UUID id, Instant datetime, BigDecimal seatPrice, MovieInfo movie, RoomInfo room) {
 
-    public record MovieInfo(
-            UUID id,
-            String title,
-            Genre genre,
-            String description,
-            Duration duration) {}
+  public record MovieInfo(
+      UUID id, String title, Genre genre, String description, Duration duration) {}
 
-    public record RoomInfo(
-            UUID id,
-            String number,
-            int capacity) {}
+  public record RoomInfo(UUID id, String number, int capacity) {}
 }
