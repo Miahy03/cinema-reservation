@@ -39,6 +39,10 @@ public class SecurityConf {
                     .authenticated()
                     .requestMatchers(HttpMethod.PUT, "/movies")
                     .hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.PUT, "/projections")
+                    .hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.GET, "/projections")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .exceptionHandling(
