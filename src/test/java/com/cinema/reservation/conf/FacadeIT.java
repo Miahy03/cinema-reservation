@@ -20,7 +20,6 @@ public class FacadeIT {
 
     new BucketConf().configureProperties(registry);
     new EmailConf().configureProperties(registry);
-    new PostgresConf().configureProperties(registry);
 
     try {
       var envConfClazz = Class.forName("com.cinema.reservation.conf.EnvConf");
