@@ -27,166 +27,148 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProjectionServiceTest {
 
-    @Mock ProjectionRepository projectionRepository;
-    @Mock MovieRepository movieRepository;
-    @Mock RoomRepository roomRepository;
+  @Mock ProjectionRepository projectionRepository;
+  @Mock MovieRepository movieRepository;
+  @Mock RoomRepository roomRepository;
 
-    @InjectMocks ProjectionService service;
+  @InjectMocks ProjectionService service;
 
-    private static Projection projection(UUID id) {
-        Movie movie =
-                Movie.builder()
-                        .id(UUID.randomUUID())
-                        .title("Dune")
-                        .genre(Genre.SCI_FI)
-                        .description("A science-fiction epic")
-                        .duration(Duration.ofMinutes(155))
-                        .build();
+  private static Projection projection(UUID id) {
+    Movie movie =
+        Movie.builder()
+            .id(UUID.randomUUID())
+            .title("Dune")
+            .genre(Genre.SCI_FI)
+            .description("A science-fiction epic")
+            .duration(Duration.ofMinutes(155))
+            .build();
 
-        Room room =
-                Room.builder()
-                        .id(UUID.randomUUID())
-                        .number("1")
-                        .capacity(100)
-                        .build();
+    Room room = Room.builder().id(UUID.randomUUID()).number("1").capacity(100).build();
 
-        return Projection.builder()
-                .id(id)
-                .datetime(Instant.now())
-                .seatPrice(new BigDecimal("10.50"))
-                .movie(movie)
-                .room(room)
-                .build();
-    }
+    return Projection.builder()
+        .id(id)
+        .datetime(Instant.now())
+        .seatPrice(new BigDecimal("10.50"))
+        .movie(movie)
+        .room(room)
+        .build();
+  }
 
-    @Test
-    void listAll_maps_projections() {
-        Projection projection = projection(UUID.randomUUID());
+  @Test
+  void listAll_maps_projections() {
+    Projection projection = projection(UUID.randomUUID());
 
-        when(projectionRepository.findAll()).thenReturn(List.of(projection));
+    when(projectionRepository.findAll()).thenReturn(List.of(projection));
 
-        var result = service.listAll();
+    var result = service.listAll();
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).id()).isEqualTo(projection.getId());
-        assertThat(result.get(0).movie().title()).isEqualTo("Dune");
-        assertThat(result.get(0).room().number()).isEqualTo("1");
-    }
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).id()).isEqualTo(projection.getId());
+    assertThat(result.get(0).movie().title()).isEqualTo("Dune");
+    assertThat(result.get(0).room().number()).isEqualTo("1");
+  }
 
-    @Test
-    void update_updates_projection() {
-        Projection existing = projection(UUID.randomUUID());
+  @Test
+  void update_updates_projection() {
+    Projection existing = projection(UUID.randomUUID());
 
-        Movie newMovie =
-                Movie.builder()
-                        .id(UUID.randomUUID())
-                        .title("Interstellar")
-                        .genre(Genre.SCI_FI)
-                        .description("Space movie")
-                        .duration(Duration.ofMinutes(169))
-                        .build();
+    Movie newMovie =
+        Movie.builder()
+            .id(UUID.randomUUID())
+            .title("Interstellar")
+            .genre(Genre.SCI_FI)
+            .description("Space movie")
+            .duration(Duration.ofMinutes(169))
+            .build();
 
-        Room newRoom =
-                Room.builder()
-                        .id(UUID.randomUUID())
-                        .number("2")
-                        .capacity(150)
-                        .build();
+    Room newRoom = Room.builder().id(UUID.randomUUID()).number("2").capacity(150).build();
 
-        Instant newDatetime = Instant.now().plusSeconds(3600);
+    Instant newDatetime = Instant.now().plusSeconds(3600);
 
-        when(projectionRepository.findById(existing.getId()))
-                .thenReturn(Optional.of(existing));
+    when(projectionRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
 
-        when(movieRepository.findById(newMovie.getId()))
-                .thenReturn(Optional.of(newMovie));
+    when(movieRepository.findById(newMovie.getId())).thenReturn(Optional.of(newMovie));
 
-        when(roomRepository.findById(newRoom.getId()))
-                .thenReturn(Optional.of(newRoom));
+    when(roomRepository.findById(newRoom.getId())).thenReturn(Optional.of(newRoom));
 
-        when(projectionRepository.save(existing))
-                .thenReturn(existing);
+    when(projectionRepository.save(existing)).thenReturn(existing);
 
-        var result =
+    var result =
+        service.update(
+            new UpsertProjection(
+                existing.getId(),
+                newDatetime,
+                new BigDecimal("15.00"),
+                newMovie.getId(),
+                newRoom.getId()));
+
+    assertThat(result.id()).isEqualTo(existing.getId());
+    assertThat(result.datetime()).isEqualTo(newDatetime);
+    assertThat(result.seatPrice()).isEqualByComparingTo("15.00");
+    assertThat(result.movie().id()).isEqualTo(newMovie.getId());
+    assertThat(result.room().id()).isEqualTo(newRoom.getId());
+  }
+
+  @Test
+  void update_projection_not_found_throws() {
+    UUID id = UUID.randomUUID();
+
+    when(projectionRepository.findById(id)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(
+            () ->
                 service.update(
-                        new UpsertProjection(
-                                existing.getId(),
-                                newDatetime,
-                                new BigDecimal("15.00"),
-                                newMovie.getId(),
-                                newRoom.getId()));
+                    new UpsertProjection(
+                        id,
+                        Instant.now(),
+                        new BigDecimal("10.00"),
+                        UUID.randomUUID(),
+                        UUID.randomUUID())))
+        .isInstanceOf(ProjectionNotFoundException.class);
+  }
 
-        assertThat(result.id()).isEqualTo(existing.getId());
-        assertThat(result.datetime()).isEqualTo(newDatetime);
-        assertThat(result.seatPrice()).isEqualByComparingTo("15.00");
-        assertThat(result.movie().id()).isEqualTo(newMovie.getId());
-        assertThat(result.room().id()).isEqualTo(newRoom.getId());
-    }
+  @Test
+  void update_movie_not_found_throws() {
+    Projection existing = projection(UUID.randomUUID());
+    UUID movieId = UUID.randomUUID();
 
-    @Test
-    void update_projection_not_found_throws() {
-        UUID id = UUID.randomUUID();
+    when(projectionRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
 
-        when(projectionRepository.findById(id)).thenReturn(Optional.empty());
+    when(movieRepository.findById(movieId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(
-                () ->
-                        service.update(
-                                new UpsertProjection(
-                                        id,
-                                        Instant.now(),
-                                        new BigDecimal("10.00"),
-                                        UUID.randomUUID(),
-                                        UUID.randomUUID())))
-                .isInstanceOf(ProjectionNotFoundException.class);
-    }
+    assertThatThrownBy(
+            () ->
+                service.update(
+                    new UpsertProjection(
+                        existing.getId(),
+                        Instant.now(),
+                        new BigDecimal("10.00"),
+                        movieId,
+                        UUID.randomUUID())))
+        .isInstanceOf(MovieNotFoundException.class);
+  }
 
-    @Test
-    void update_movie_not_found_throws() {
-        Projection existing = projection(UUID.randomUUID());
-        UUID movieId = UUID.randomUUID();
+  @Test
+  void update_room_not_found_throws() {
+    Projection existing = projection(UUID.randomUUID());
+    UUID roomId = UUID.randomUUID();
 
-        when(projectionRepository.findById(existing.getId()))
-                .thenReturn(Optional.of(existing));
+    when(projectionRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
 
-        when(movieRepository.findById(movieId))
-                .thenReturn(Optional.empty());
+    when(movieRepository.findById(existing.getMovie().getId()))
+        .thenReturn(Optional.of(existing.getMovie()));
 
-        assertThatThrownBy(
-                () ->
-                        service.update(
-                                new UpsertProjection(
-                                        existing.getId(),
-                                        Instant.now(),
-                                        new BigDecimal("10.00"),
-                                        movieId,
-                                        UUID.randomUUID())))
-                .isInstanceOf(MovieNotFoundException.class);
-    }
+    when(roomRepository.findById(roomId)).thenReturn(Optional.empty());
 
-    @Test
-    void update_room_not_found_throws() {
-        Projection existing = projection(UUID.randomUUID());
-        UUID roomId = UUID.randomUUID();
-
-        when(projectionRepository.findById(existing.getId()))
-                .thenReturn(Optional.of(existing));
-
-        when(movieRepository.findById(existing.getMovie().getId()))
-                .thenReturn(Optional.of(existing.getMovie()));
-
-        when(roomRepository.findById(roomId))
-                .thenReturn(Optional.empty());
-
-        assertThatThrownBy(
-                () ->
-                        service.update(
-                                new UpsertProjection(
-                                        existing.getId(),
-                                        Instant.now(),
-                                        new BigDecimal("10.00"),
-                                        existing.getMovie().getId(),
-                                        roomId)))
-                .isInstanceOf(RoomNotFoundException.class);
-    }
+    assertThatThrownBy(
+            () ->
+                service.update(
+                    new UpsertProjection(
+                        existing.getId(),
+                        Instant.now(),
+                        new BigDecimal("10.00"),
+                        existing.getMovie().getId(),
+                        roomId)))
+        .isInstanceOf(RoomNotFoundException.class);
+  }
 }
