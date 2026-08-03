@@ -134,15 +134,6 @@ dependencies {
 
     implementation 'org.reflections:reflections:0.10.2'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.postgresql:postgresql'
-
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
-
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
@@ -153,7 +144,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.2.2'
     testImplementation 'org.testcontainers:testcontainers-junit-jupiter:2.0.2'
-    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.2'
     testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
 
