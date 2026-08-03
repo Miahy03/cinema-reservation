@@ -7,8 +7,8 @@ import java.time.Duration;
 import java.util.UUID;
 
 public record UpsertMovie(
-        @NotNull UUID id,
-        @NotBlank String title,
-        @NotNull Genre genre,
-        @NotBlank String description,
-        @NotNull Duration duration) {}
+    @NotNull UUID id,
+    @NotBlank String title,
+    @NotNull Genre genre,
+    @NotBlank String description,
+    @NotNull Duration duration) {}
