@@ -85,58 +85,6 @@ jobs:
           echo "to_upload_filename=$(echo $response | jq -r '.filename')" >> $GITHUB_ENV
           curl -X GET -o template.yml "$(echo $response | jq -r '.build_template_file_uri')"
 
-      - name: Restore project dependencies for build
-        run: |
-          python3 - <<'PYTHON'
-          from pathlib import Path
-
-          bg = Path('build.gradle')
-          content = bg.read_text()
-
-          dep_lines = [
-              "    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'",
-              "    implementation 'org.springframework.boot:spring-boot-starter-security'",
-              "    implementation 'org.springframework.boot:spring-boot-starter-validation'",
-              "    implementation 'org.postgresql:postgresql'",
-              "    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'",
-              "    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'",
-              "    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'",
-              "    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.2'",
-          ]
-          if "spring-boot-starter-data-jpa" not in content:
-              content += "\n\ndependencies {\n" + "\n".join(dep_lines) + "\n}\n"
-
-          excluded = [
-              "**/gen/**", "**/mail/**", "**/handler/**", "**/file/**",
-              "**/concurrency/**", "**/datastructure/**", "**/health/**",
-              "**/PojaApplication.class", "**/PojaGenerated.class",
-              "**/endpoint/EndpointConf.class", "**/endpoint/RequestLoggerConfigurer.class",
-          ]
-          old_jacoco = '            fileTree(dir: it, exclude: [\n                    "**/gen/**"\n            ])'
-          new_jacoco = ('            fileTree(dir: it, exclude: [\n'
-                        + "".join('                    "%s",\n' % e for e in excluded[:-1])
-                        + '                    "%s"\n' % excluded[-1]
-                        + '            ])')
-          content = content.replace(old_jacoco, new_jacoco)
-
-          content = content.replace(
-              'maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1',
-              'maxParallelForks = 1',
-          )
-
-          bg.write_text(content)
-
-          f = Path('src/test/java/com/cinema/reservation/conf/FacadeIT.java')
-          fc = f.read_text()
-          if "new PostgresConf().configureProperties(registry);" not in fc:
-              old_line = "    new EmailConf().configureProperties(registry);\n"
-              new_line = ("    new EmailConf().configureProperties(registry);\n"
-                          "    new PostgresConf().configureProperties(registry);\n")
-              fc = fc.replace(old_line, new_line)
-          f.write_text(fc)
-          print("build.gradle and FacadeIT patched for Poja build")
-          PYTHON
-
       - name: Build project
         run: sam build
 
