@@ -83,7 +83,7 @@ class ProjectionServiceTest {
 
     Room newRoom = Room.builder().id(UUID.randomUUID()).number("2").capacity(150).build();
 
-    Instant newDatetime = Instant.now().plusSeconds(3600);
+    String newDatetime = Instant.now().plusSeconds(3600).toString();
 
     when(projectionRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
 
@@ -120,7 +120,7 @@ class ProjectionServiceTest {
                 service.update(
                     new UpsertProjection(
                         id,
-                        Instant.now(),
+                        Instant.now().toString(),
                         new BigDecimal("10.00"),
                         UUID.randomUUID(),
                         UUID.randomUUID())))
@@ -141,7 +141,7 @@ class ProjectionServiceTest {
                 service.update(
                     new UpsertProjection(
                         existing.getId(),
-                        Instant.now(),
+                        Instant.now().toString(),
                         new BigDecimal("10.00"),
                         movieId,
                         UUID.randomUUID())))
@@ -165,7 +165,7 @@ class ProjectionServiceTest {
                 service.update(
                     new UpsertProjection(
                         existing.getId(),
-                        Instant.now(),
+                        Instant.now().toString(),
                         new BigDecimal("10.00"),
                         existing.getMovie().getId(),
                         roomId)))

@@ -42,14 +42,13 @@ class MovieServiceTest {
 
     var result =
         service.update(
-            new UpsertMovie(
-                id, "Dune Part Two", Genre.SCI_FI, "Updated description", Duration.ofMinutes(166)));
+            new UpsertMovie(id, "Dune Part Two", Genre.SCI_FI, "Updated description", "PT2H46M"));
 
     assertThat(result.id()).isEqualTo(id);
     assertThat(result.title()).isEqualTo("Dune Part Two");
     assertThat(result.genre()).isEqualTo(Genre.SCI_FI);
     assertThat(result.description()).isEqualTo("Updated description");
-    assertThat(result.duration()).isEqualTo(Duration.ofMinutes(166));
+    assertThat(result.duration()).isEqualTo("PT2H46M");
   }
 
   @Test
@@ -61,8 +60,7 @@ class MovieServiceTest {
     assertThatThrownBy(
             () ->
                 service.update(
-                    new UpsertMovie(
-                        id, "Unknown movie", Genre.SCI_FI, "Description", Duration.ofMinutes(120))))
+                    new UpsertMovie(id, "Unknown movie", Genre.SCI_FI, "Description", "PT2H")))
         .isInstanceOf(MovieNotFoundException.class);
   }
 }

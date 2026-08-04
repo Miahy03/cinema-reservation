@@ -87,11 +87,7 @@ class MovieIT {
   void put_movie_forbidden_for_client() {
     var body =
         new UpsertMovie(
-            movie.getId(),
-            "Dune Part Two",
-            Genre.SCI_FI,
-            "Updated description",
-            Duration.ofMinutes(166));
+            movie.getId(), "Dune Part Two", Genre.SCI_FI, "Updated description", "PT2H46M");
 
     var response =
         rest.exchange(
@@ -107,11 +103,7 @@ class MovieIT {
   void put_movie_forbidden_for_employee() {
     var body =
         new UpsertMovie(
-            movie.getId(),
-            "Dune Part Two",
-            Genre.SCI_FI,
-            "Updated description",
-            Duration.ofMinutes(166));
+            movie.getId(), "Dune Part Two", Genre.SCI_FI, "Updated description", "PT2H46M");
 
     var response =
         rest.exchange(
@@ -127,11 +119,7 @@ class MovieIT {
   void put_movie_ok_for_manager() {
     var body =
         new UpsertMovie(
-            movie.getId(),
-            "Dune Part Two",
-            Genre.SCI_FI,
-            "Updated description",
-            Duration.ofMinutes(166));
+            movie.getId(), "Dune Part Two", Genre.SCI_FI, "Updated description", "PT2H46M");
 
     var response =
         rest.exchange(
@@ -146,18 +134,14 @@ class MovieIT {
     assertThat(response.getBody().title()).isEqualTo("Dune Part Two");
     assertThat(response.getBody().genre()).isEqualTo(Genre.SCI_FI);
     assertThat(response.getBody().description()).isEqualTo("Updated description");
-    assertThat(response.getBody().duration()).isEqualTo(Duration.ofMinutes(166));
+    assertThat(response.getBody().duration()).isEqualTo("PT2H46M");
   }
 
   @Test
   void put_movie_not_found_for_manager() {
     var body =
         new UpsertMovie(
-            UUID.randomUUID(),
-            "Unknown movie",
-            Genre.SCI_FI,
-            "Movie not found",
-            Duration.ofMinutes(120));
+            UUID.randomUUID(), "Unknown movie", Genre.SCI_FI, "Movie not found", "PT2H");
 
     var response =
         rest.exchange(

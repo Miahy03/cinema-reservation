@@ -4,6 +4,7 @@ import com.cinema.reservation.endpoint.rest.dto.MovieResponse;
 import com.cinema.reservation.endpoint.rest.dto.UpsertMovie;
 import com.cinema.reservation.model.Movie;
 import com.cinema.reservation.repository.MovieRepository;
+import java.time.Duration;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class MovieService {
     movie.setTitle(request.title());
     movie.setGenre(request.genre());
     movie.setDescription(request.description());
-    movie.setDuration(request.duration());
+    movie.setDuration(Duration.parse(request.duration()));
     return toResponse(movieRepository.save(movie));
   }
 
@@ -34,6 +35,6 @@ public class MovieService {
         movie.getTitle(),
         movie.getGenre(),
         movie.getDescription(),
-        movie.getDuration());
+        movie.getDuration().toString());
   }
 }

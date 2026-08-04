@@ -8,6 +8,7 @@ import com.cinema.reservation.model.Room;
 import com.cinema.reservation.repository.MovieRepository;
 import com.cinema.reservation.repository.ProjectionRepository;
 import com.cinema.reservation.repository.RoomRepository;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class ProjectionService {
     Movie movie =
         movieRepository.findById(request.movieId()).orElseThrow(MovieNotFoundException::new);
     Room room = roomRepository.findById(request.roomId()).orElseThrow(RoomNotFoundException::new);
-    projection.setDatetime(request.datetime());
+    projection.setDatetime(Instant.parse(request.datetime()));
     projection.setSeatPrice(request.seatPrice());
     projection.setMovie(movie);
     projection.setRoom(room);
@@ -47,7 +48,7 @@ public class ProjectionService {
   private ProjectionResponse toResponse(Projection projection) {
     return new ProjectionResponse(
         projection.getId(),
-        projection.getDatetime(),
+        projection.getDatetime().toString(),
         projection.getSeatPrice(),
         toMovie(projection.getMovie()),
         toRoom(projection.getRoom()));
@@ -59,7 +60,7 @@ public class ProjectionService {
         movie.getTitle(),
         movie.getGenre(),
         movie.getDescription(),
-        movie.getDuration());
+        movie.getDuration().toString());
   }
 
   private ProjectionResponse.RoomInfo toRoom(Room room) {

@@ -65,7 +65,7 @@ public class ReservationService {
   private ReservationResponse toResponse(Reservation reservation) {
     return new ReservationResponse(
         reservation.getId(),
-        reservation.getCreatedAt(),
+        reservation.getCreatedAt().toString(),
         toProjection(reservation.getProjection()),
         toUser(reservation.getUser()),
         reservation.getSeats().stream().map(this::toSeat).toList());
@@ -74,7 +74,7 @@ public class ReservationService {
   private ReservationResponse.ProjectionInfo toProjection(Projection projection) {
     return new ReservationResponse.ProjectionInfo(
         projection.getId(),
-        projection.getDatetime(),
+        projection.getDatetime().toString(),
         projection.getSeatPrice(),
         toMovie(projection.getMovie()),
         toRoom(projection.getRoom()));
@@ -86,7 +86,7 @@ public class ReservationService {
         movie.getTitle(),
         movie.getGenre(),
         movie.getDescription(),
-        movie.getDuration());
+        movie.getDuration().toString());
   }
 
   private ReservationResponse.RoomInfo toRoom(Room room) {
