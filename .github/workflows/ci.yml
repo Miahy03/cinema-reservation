@@ -31,6 +31,33 @@ jobs:
           distribution: 'corretto'
       - run: chmod +x gradlew
       - run: chmod +x .shell/publish_gen_to_maven_local.sh
+
+      - name: Restore project dependencies for tests
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+
+          bg = Path('build.gradle')
+          content = bg.read_text()
+
+          dep_lines = [
+              "    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'",
+              "    implementation 'org.springframework.boot:spring-boot-starter-security'",
+              "    implementation 'org.springframework.boot:spring-boot-starter-validation'",
+              "    implementation 'org.postgresql:postgresql'",
+              "    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'",
+              "    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'",
+              "    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'",
+              "    testImplementation 'org.testcontainers:testcontainers-postgresql:2.0.2'",
+          ]
+          if "spring-boot-starter-data-jpa" not in content:
+              content += "\n\ndependencies {\n" + "\n".join(dep_lines) + "\n}\n"
+              bg.write_text(content)
+              print("build.gradle patched for tests")
+          else:
+              print("dependencies already present")
+          PYTHON
+
       - run: |
           ./gradlew test
 
