@@ -16,6 +16,7 @@ import com.cinema.reservation.repository.ProjectionRepository;
 import com.cinema.reservation.repository.ReservationRepository;
 import com.cinema.reservation.repository.SeatRepository;
 import com.cinema.reservation.security.UserPrincipal;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,12 @@ class ReservationServiceTest {
   private static Reservation reservation(UUID id, UUID userId) {
     User user = User.builder().id(userId).firstName("Alice").lastName("Doe").email("a@a").build();
     Room room = Room.builder().id(UUID.randomUUID()).number("1").capacity(100).build();
-    Movie movie = Movie.builder().id(UUID.randomUUID()).title("Dune").build();
+    Movie movie =
+        Movie.builder()
+            .id(UUID.randomUUID())
+            .title("Dune")
+            .duration(Duration.ofMinutes(155))
+            .build();
     Projection projection =
         Projection.builder()
             .id(UUID.randomUUID())

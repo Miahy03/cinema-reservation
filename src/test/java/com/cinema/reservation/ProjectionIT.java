@@ -105,7 +105,7 @@ class ProjectionIT {
     var body =
         new UpsertProjection(
             projection.getId(),
-            Instant.now(),
+            Instant.now().toString(),
             new BigDecimal("12.50"),
             movie.getId(),
             room.getId());
@@ -125,7 +125,7 @@ class ProjectionIT {
     var body =
         new UpsertProjection(
             projection.getId(),
-            Instant.now(),
+            Instant.now().toString(),
             new BigDecimal("12.50"),
             movie.getId(),
             room.getId());
@@ -142,7 +142,7 @@ class ProjectionIT {
 
   @Test
   void put_projection_ok_for_manager() {
-    Instant newDatetime = Instant.now().plusSeconds(3600);
+    String newDatetime = Instant.now().plusSeconds(3600).toString();
 
     var body =
         new UpsertProjection(
@@ -167,7 +167,11 @@ class ProjectionIT {
   void put_projection_not_found_for_manager() {
     var body =
         new UpsertProjection(
-            UUID.randomUUID(), Instant.now(), new BigDecimal("12.50"), movie.getId(), room.getId());
+            UUID.randomUUID(),
+            Instant.now().toString(),
+            new BigDecimal("12.50"),
+            movie.getId(),
+            room.getId());
 
     var response =
         rest.exchange(
